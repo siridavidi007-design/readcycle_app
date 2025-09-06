@@ -10,7 +10,9 @@ export default function BookDetails() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState("");
-  
+  // FIX: Add state variables for submitting and error
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -35,10 +37,10 @@ export default function BookDetails() {
     }
     try {
       setSubmitting(true);
-    setError("");
-    const userRef = doc(db, "user", user.uid);      
-    const userSnap = await getDoc(userRef);         
-    const userData = userSnap.exists() ? userSnap.data() : {};
+      setError("");
+      const userRef = doc(db, "user", user.uid);      
+      const userSnap = await getDoc(userRef);         
+      const userData = userSnap.exists() ? userSnap.data() : {};
       await addDoc(collection(db, "requests"), {
         bookId: id,
         bookTitle: book.title,
@@ -51,9 +53,13 @@ export default function BookDetails() {
         timestamp: new Date(),
       });
       setMsg("✅ Request submitted!");
+      setError(""); // Resetting error on success
     } catch (e) {
       console.error(e);
       setMsg("❌ Failed to submit request.");
+      setError("Failed to submit request."); // Setting error on failure
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -71,10 +77,11 @@ export default function BookDetails() {
       <p><strong>Chapter Location:</strong> {book.chapterLocation}</p>
 
       {user && role !== "chapterLeader" && (
-        <button onClick={handleRequest}>📥 Request this book</button>
+        <button onClick={handleRequest} disabled={submitting}>📥 Request this book</button>
       )}
 
       {msg && <p>{msg}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
