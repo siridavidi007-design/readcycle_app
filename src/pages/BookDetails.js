@@ -12,7 +12,7 @@ export default function BookDetails() {
   const [msg, setMsg] = useState("");
   // FIX: Add state variables for submitting and error
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     const fetchBook = async () => {
