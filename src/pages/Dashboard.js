@@ -450,7 +450,5 @@ export default function Dashboard() {
       </div>
     );
   }
-
-  return <h2>No dashboard available for this role.</h2>;
 }
 
